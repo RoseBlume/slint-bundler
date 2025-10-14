@@ -9,7 +9,7 @@ use crate::bundle::linux::{bundle_deb, bundle_rpm, bundle_tar_zst, bundle_tar_xz
 #[cfg(target_os = "windows")]
 mod windows;
 #[cfg(target_os = "windows")]
-use crate::bundle::windows::{bundle_msi, bundle_nsis};
+use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_standalone};
 
 
 
