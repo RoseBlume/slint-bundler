@@ -1,0 +1,10 @@
+target
+examples/*/target
+**/target
+**/Cargo.lock
+**/*.deb
+**/*.rpm
+**/*.tar.xz
+**/*.tar.zst
+**/*.msi
+**/*.exe

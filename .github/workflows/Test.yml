@@ -1,0 +1,41 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            args: ''
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            args: '--features linux-bundles'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Run checks
+        run: cargo check -q
+      - name: Run Tests
+        run: cargo test -q
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }} ${{ matrix.args }}
+      - name: Install
+        run: cargo install --path .
+      - name: Bundle
+        run: |
+          cd examples/slint-rust-template
+          slint-bundler build
