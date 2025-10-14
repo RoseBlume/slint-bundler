@@ -191,7 +191,7 @@ pub fn bundle_standalone() {
 
     let zip_file = fs::File::create(&out_path).expect("failed to create zip file");
     let mut zip = ZipWriter::new(zip_file);
-    let options: FileOptions = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options: FileOptions<T> = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     let mut f = fs::File::open(&release_bin).expect("failed to open binary");
     zip.start_file(release_bin.file_name().unwrap().to_string_lossy(), options)
