@@ -12,9 +12,12 @@ image = "0.25.8"
 ico = "0.4.0"
 icns = "0.3.1"
 tempfile = "3.23.0"
-tar = "0.4"
 flate2 = "1.0"
+
+
+[target."cfg(target_os = \"linux\")".dependencies]
 ar = "0.8"
 rpm = { version = "0.16", features = ["bzip2-compression"] }
 zstd = "0.11"
 xz2 = "0.1"
+tar = "0.4"

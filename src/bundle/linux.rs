@@ -6,86 +6,7 @@ use tempfile::tempdir;
 use image;
 use crate::desktop::write_desktop_file;
 use rpm::{PackageBuilder, FileOptions};
-pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_method: Option<String>) {
-    // 1. Build the project in release mode
-    let status = Command::new("cargo")
-        .arg("build")
-        .arg("--release")
-        .status()
-        .expect("Failed to run cargo build");
-    if !status.success() {
-        eprintln!("Build failed");
-        std::process::exit(1);
-    }
 
-    // 2. Determine bundles to create
-    let os = std::env::consts::OS;
-    let all_bundles = match os {
-        "windows" => vec!["msi", "nsis"],
-        "linux" => vec!["deb", "rpm", "tar.zst", "tar.xz", "standalone"],
-        _ => vec!["standalone"],
-    };
-    let bundles = bundles.unwrap_or_else(|| all_bundles.iter().map(|s| s.to_string()).collect());
-
-    // 3. Bundle for each requested type. If cross_arch flag is set, attempt to
-    // create bundles for several non-host architectures by setting the
-    // SLINT_BUNDLER_FORCE_ARCH environment variable per attempt.
-    // let archs_to_try = vec!["i386", "x86_64", "aarch64", "armhf", "riscv64"];
-    if cross_arch {
-        println!("TODO: Unfinished and disabled for now.");
-        /*
-        // determine host normalized arch
-        let host_arch = normalize_host_arch();
-        for arch in archs_to_try.into_iter().filter(|a| *a != host_arch) {
-            println!("Attempting bundles for target architecture: {}", arch);
-            std::env::set_var("SLINT_BUNDLER_FORCE_ARCH", arch);
-            // perform a build inside a VM/container for this arch (docker/qemu)
-            if let Some(method) = _cross_method.as_ref() {
-                if let Err(e) = run_build_in_vm(arch, method) {
-                    eprintln!("Warning: VM build for arch {} failed: {}\nFalling back to attempting packaging without fresh build.", arch, e);
-                }
-            } else {
-                // default to docker-based emulation if available
-                if let Err(e) = run_build_in_vm(arch, "docker") {
-                    eprintln!("Warning: VM build (docker) for arch {} failed: {}\nFalling back to attempting packaging without fresh build.", arch, e);
-                }
-            }
-            for bundle in &bundles {
-                match bundle.as_str() {
-                    "msi" => bundle_msi(),
-                    "nsis" => bundle_nsis(),
-                    "deb" => bundle_deb(),
-                    "rpm" => bundle_rpm(),
-                    "tar.zst" => bundle_tar_zst(),
-                    "tar.xz" => bundle_tar_xz(),
-                    "standalone" => bundle_standalone(),
-                    _ => eprintln!("Unknown bundle type: {}", bundle),
-                }
-            }
-            std::env::remove_var("SLINT_BUNDLER_FORCE_ARCH");
-        }
-        // Also produce host bundles as a final step
-        println!("Creating bundles for host architecture");
-        */
-    }
-    
-
-    // produce host bundles (or only bundles if cross_arch was false)
-    for bundle in bundles {
-        match bundle.as_str() {
-            "msi" => bundle_msi(),
-            "nsis" => bundle_nsis(),
-            "deb" => bundle_deb(),
-            "rpm" => bundle_rpm(),
-            "tar.zst" => bundle_tar_zst(),
-            "tar.xz" => bundle_tar_xz(),
-            "standalone" => bundle_standalone(),
-            _ => eprintln!("Unknown bundle type: {}", bundle),
-        }
-    }
-}
-
-// Normalize host arch into one of the known identifiers used by this bundler.
 fn normalize_host_arch() -> &'static str {
     match std::env::consts::ARCH {
         "x86_64" => "x86_64",
@@ -96,18 +17,6 @@ fn normalize_host_arch() -> &'static str {
         _ => "noarch",
     }
 }
-
-// Return the effective arch: if SLINT_BUNDLER_FORCE_ARCH is set, use that,
-// otherwise use the normalized host arch.
-fn effective_arch() -> String {
-    if let Ok(v) = std::env::var("SLINT_BUNDLER_FORCE_ARCH") {
-        return v;
-    }
-    normalize_host_arch().to_string()
-}
-
-// Map effective arch to names used in filenames (keeps most mapping identical,
-// but maps "armhf" -> "armhfp" where a previous convention required it).
 fn filename_arch_name(eff: &str) -> &str {
     match eff {
         "x86_64" => "x86_64",
@@ -119,7 +28,6 @@ fn filename_arch_name(eff: &str) -> &str {
     }
 }
 
-// Map effective arch to Debian architecture names for the control file
 fn deb_arch_name(eff: &str) -> &str {
     match eff {
         "x86_64" => "amd64",
@@ -131,14 +39,21 @@ fn deb_arch_name(eff: &str) -> &str {
     }
 }
 
-fn bundle_msi() {
-    println!("[TODO] Bundle as MSI (Windows)");
+
+// Return the effective arch: if SLINT_BUNDLER_FORCE_ARCH is set, use that,
+// otherwise use the normalized host arch.
+fn effective_arch() -> String {
+    if let Ok(v) = std::env::var("SLINT_BUNDLER_FORCE_ARCH") {
+        return v;
+    }
+    normalize_host_arch().to_string()
 }
-fn bundle_nsis() {
-    println!("[TODO] Bundle as NSIS (Windows)");
-}
-#[cfg(target_os = "linux")]
-fn bundle_deb() {
+
+
+// Map effective arch to names used in filenames (keeps most mapping identical,
+// but maps "armhf" -> "armhfp" where a previous convention required it).
+
+pub fn bundle_deb() {
     println!("Creating .deb package...");
 
     // Read package name and version from Cargo.toml
@@ -279,8 +194,8 @@ fn bundle_deb() {
 
     println!("Created {}", output_deb_path.display());
 }
-#[cfg(target_os = "linux")]
-fn bundle_rpm() {
+
+pub fn bundle_rpm() {
     println!("Creating .rpm package...");
 
     // Read package name and version from Cargo.toml
@@ -400,8 +315,8 @@ fn bundle_rpm() {
     pkg.write(&mut f).expect("failed to write rpm");
     println!("Created {}", out_path.display());
 }
-#[cfg(target_os = "linux")]
-fn bundle_tar_zst() {
+
+pub fn bundle_tar_zst() {
     println!("Creating .tar.zst package (Arch)...");
 
     // Read package name and version from Cargo.toml
@@ -489,8 +404,8 @@ fn bundle_tar_zst() {
 
     println!("Created {}", out_path.display());
 }
-#[cfg(target_os = "linux")]
-fn bundle_tar_xz() {
+
+pub fn bundle_tar_xz() {
     println!("Creating .tar.xz package (Arch)...");
 
     // Read package name and version from Cargo.toml
@@ -577,8 +492,8 @@ fn bundle_tar_xz() {
     println!("Created {}", out_path.display());
 }
 // This will bundle as an AppImage
-#[cfg(target_os = "linux")]
-fn bundle_standalone() {
+
+pub fn bundle_standalone() {
     println!("Creating standalone AppImage...");
 
     // Read package name and version from Cargo.toml
@@ -687,27 +602,4 @@ fn bundle_standalone() {
     tar.finish().expect("failed to finish tar");
 
     println!("Wrote AppDir archive fallback at {} (not an AppImage)", out_path.with_extension("tar.gz").display());
-}
-
-// This will bundle as a custom executable that will install this application on Windows without the need for a GUI
-#[cfg(target_os = "windows")]
-fn bundle_standalone() {
-    println!("[TODO] Bundle as standalone binary");
-}
-
-#[cfg(target_os = "windows")]
-fn bundle_deb() {
-    println!("Debian packaging is not supported on Windows.");
-}
-#[cfg(target_os = "windows")]
-fn bundle_rpm() {
-    println!("RPM packaging is not supported on Windows.");
-}
-#[cfg(target_os = "windows")]
-fn bundle_tar_zst() {
-    println!("tar.zst packaging is not supported on Windows.");
-}
-#[cfg(target_os = "windows")]
-fn bundle_tar_xz() {
-    println!("tar.xz packaging is not supported on Windows.");
 }
