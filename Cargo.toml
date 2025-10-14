@@ -21,3 +21,6 @@ rpm = { version = "0.16", features = ["bzip2-compression"] }
 zstd = "0.11"
 xz2 = "0.1"
 tar = "0.4"
+
+[target."cfg(target_os = \"windows\")".dependencies]
+zip = "6"
