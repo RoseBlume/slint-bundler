@@ -1,4 +1,6 @@
+#[cfg(target_os = "linux")]
 mod desktop;
+
 mod bundle;
 mod dev;
 mod icon;

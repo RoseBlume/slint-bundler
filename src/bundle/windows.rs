@@ -4,7 +4,7 @@ use std::path::Path;
 use std::process::Command;
 use tempfile::tempdir;
 use zip::{write::SimpleFileOptions, ZipWriter};
-use std::io::{Write, Seek};
+
 
 /// Helper: Extract name and version from Cargo.toml
 fn read_package_metadata() -> (String, String) {
