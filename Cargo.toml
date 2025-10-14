@@ -12,7 +12,7 @@ image = "0.25.8"
 ico = "0.4.0"
 icns = "0.3.1"
 flate2 = "1.0"
-
+tempfile = "3.23.0"
 
 [target."cfg(target_os = \"linux\")".dependencies]
 ar = "0.8"
@@ -23,4 +23,3 @@ tar = "0.4"
 
 [target."cfg(target_os = \"windows\")".dependencies]
 zip = "6"
-tempfile = "3.23.0"

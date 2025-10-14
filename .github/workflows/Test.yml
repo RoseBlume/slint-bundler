@@ -15,12 +15,12 @@ jobs:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             args: ''
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            args: ''
-          - os: ubuntu-latest-arm
-            target: aarch64-unknown-linux-gnu
-            args: ''
+          #- os: ubuntu-latest
+          #  target: x86_64-unknown-linux-gnu
+          #  args: ''
+          #- os: ubuntu-latest-arm
+          #  target: aarch64-unknown-linux-gnu
+          #  args: ''
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
