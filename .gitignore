@@ -8,3 +8,7 @@ examples/*/target
 **/*.tar.zst
 **/*.msi
 **/*.exe
+examples/*/*.deb
+examples/*/*.rpm
+examples/*/*.tar.xz
+examples/*/*.tar.zst
