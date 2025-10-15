@@ -9,7 +9,7 @@ use crate::bundle::linux::{bundle_deb, bundle_rpm, bundle_tar_zst, bundle_tar_xz
 #[cfg(target_os = "windows")]
 mod windows;
 #[cfg(target_os = "windows")]
-use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_standalone};
+use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_msix, bundle_standalone};
 
 
 
@@ -28,7 +28,7 @@ pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_metho
     // 2. Determine bundles to create
     let os = std::env::consts::OS;
     let all_bundles = match os {
-        "windows" => vec!["msi", "nsis"],
+        "windows" => vec!["msi", "nsis", "msix"],
         "linux" => vec!["deb", "rpm", "tar.zst", "tar.xz", "standalone"],
         _ => vec!["standalone"],
     };
@@ -97,6 +97,7 @@ pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_metho
             "msi" => bundle_msi(),
             "nsis" => bundle_nsis(),
             "standalone" => bundle_standalone(),
+            "msix" => bundle_msix(),
             _ => eprintln!("Unknown bundle type: {}", bundle),
         }
     }
