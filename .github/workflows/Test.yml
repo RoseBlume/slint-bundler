@@ -66,9 +66,6 @@ jobs:
       - name: Run checks
         run: cargo check -q
 
-      - name: Build
-        run: cargo build --release --target ${{ matrix.target }} ${{ matrix.args }}
-
       - name: Install crate
         run: cargo install --path .
 
