@@ -67,16 +67,10 @@ jobs:
         uses: repolevedavaj/install-nsis@v1.0.1
         with:
           nsis-version: '3.10'
-      - name: Add NSIS to PATH (Windows Only)
-        if: runner.os == 'Windows'
-        run: echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
-      - name: Add msbuild to PATH
+      - name: Setup MSBuild (Windows Only)
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v1.1
-      - name: Install Windows SDK (Windows Only)
-        if: runner.os == 'Windows'
-        run: echo "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64" >> $GITHUB_PATH
-
+        
       - name: Run checks
         run: cargo check -q
 
