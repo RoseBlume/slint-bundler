@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-11
+          - os: windows-latest
             target: x86_64-pc-windows-msvc
             args: ''
           - os: windows-11-arm
