@@ -58,8 +58,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          choco install windows-sdk-10-version-2004-all -y
           choco install zip -y
+      - name: Install Windows SDK (Windows Only)
+        if: runner.os == 'Windows'
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
       - name: Install NSIS (Windows Only)
         if: runner.os == 'Windows'
         uses: repolevedavaj/install-nsis@v1.0.1
