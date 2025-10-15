@@ -14,10 +14,10 @@ jobs:
           - os: windows-11-arm
             target: aarch64-pc-windows-msvc
             args: ''
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             target: x86_64-unknown-linux-gnu
             args: ''
-          - os: ubuntu-latest-arm
+          - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             args: ''
 
