@@ -38,12 +38,7 @@ fn main() {
             bundle::handle_build(bundles);
         },
         "dev" => dev::handle_dev(),
-        "icon" => {
-            let input = parse_input(&args);
-            if let Err(e) = icon::generate_pngs(&input) {
-                eprintln!("Error generating icons: {}", e);
-            }
-        },
+        "icon" => icon::generate_pngs(&args[2]).expect("Failed to generate pngs"),
         "doctor" => {
             let fix = args.contains(&"--fix".to_string());
             doctor::doctor(fix);
