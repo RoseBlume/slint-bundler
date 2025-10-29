@@ -3,16 +3,6 @@ name = "slint-bundler"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-clap = { version = "4.0", features = ["derive"] }
-notify = "6.1"
-which = "5.0"
-thiserror = "1.0"
-image = "0.25.8"
-ico = "0.4.0"
-icns = "0.3.1"
-tempfile = "3.23.0"
-
 [target."cfg(target_os = \"linux\")".dependencies]
 ar = "0.8"
 rpm = { version = "0.16", features = ["bzip2-compression"] }
@@ -20,6 +10,32 @@ zstd = "0.11"
 xz2 = "0.1"
 tar = "0.4"
 flate2 = "1.0"
+tempfile = {version = "3.23.0", default-features = false }
 
 [target."cfg(target_os = \"windows\")".dependencies]
-zip = "6"
+msix = "0.4.0"
+
+[dependencies]
+clap = { version = "4.0", default-features = false, features = ["derive", "std", "help"] }
+notify = { version = "6.1", default-features = false}
+which = { version = "5.0", default-features = false}
+image = { version = "0.25.8", default-features = false, features = ["ico", "png"] }
+ico = { version = "0.4.0", default-features = false }
+anyhow = { version = "1.0.100", default-features = false }
+whoami = { version = "1.6.1", default-features = false }
+sha256 = "1.6.0"
+reqwest = "0.12.24" # Default features: __tls charset default-tls h2 http2 system-proxy
+toml = "0.9.8"
+
+
+
+
+[profile.dev]
+incremental = true # Compile your binary in smaller steps.
+
+[profile.release]
+codegen-units = 1 # Allows LLVM to perform better optimization.
+lto = "fat" # Enables link-time-optimizations.
+opt-level = 3 # Prioritizes small binary size. Use `3` if you prefer speed.
+panic = "abort" # Higher performance by disabling panic handlers.
+strip = true

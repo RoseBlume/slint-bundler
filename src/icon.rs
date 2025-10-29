@@ -3,6 +3,9 @@ use std::io::BufWriter;
 use std::path::Path;
 use image::{DynamicImage, ImageFormat};
 
+const INPUT_IMAGE: &str = "icons/icon.png";
+const OUTPUT_PATH: &str = "android/app/src/main/res";
+
 /// List of output icon sizes and filenames.
 const ICON_SIZES: &[(&str, u32, u32)] = &[
     ("128x128.png", 128, 128),
@@ -36,7 +39,7 @@ pub fn generate_pngs(input_path: &str) -> Result<(), Box<dyn std::error::Error>>
         resized.write_to(&mut writer, ImageFormat::Png)?;
     }
 
-    // Generate .ico and .icns files
+    // Generate .ico and file
     generate_ico(&img, output_dir)?;
 
     Ok(())
@@ -61,9 +64,60 @@ fn generate_ico(img: &DynamicImage, output_dir: &str) -> Result<(), Box<dyn std:
     Ok(())
 }
 
+/// Generates Android mipmap launcher icons (normal, foreground and round) under `icons/android/...`.
+pub fn generate_android_icons() -> Result<(), Box<dyn std::error::Error>> {
+    let img = image::open(INPUT_IMAGE)?;
+    // Typical Android launcher sizes per density (px)
+    const ANDROID_SIZES: &[(&str, u32)] = &[
+        ("mipmap-mdpi", 48),
+        ("mipmap-hdpi", 72),
+        ("mipmap-xhdpi", 96),
+        ("mipmap-xxhdpi", 144),
+        ("mipmap-xxxhdpi", 192),
+    ];
 
+    let base = Path::new(OUTPUT_PATH);
+    std::fs::create_dir_all(&base)?;
 
-// Add dependencies to Cargo.toml:
-// image = "0.24"
-// ico = "0.3"
-// icns = "0.2"
+    for (mipmap_dir, size) in ANDROID_SIZES {
+        let dir_path = base.join(mipmap_dir);
+        std::fs::create_dir_all(&dir_path)?;
+
+        // Resize once per density
+        let resized = img.resize_exact(*size, *size, image::imageops::Lanczos3);
+
+        // filenames to produce
+        let names = ["ic_launcher.png", "ic_launcher_foreground.png", "ic_launcher_round.png"];
+        for name in &names {
+            let output_path = dir_path.join(name);
+            let file = File::create(&output_path)?;
+            let mut writer = BufWriter::new(file);
+
+            if *name == "ic_launcher_round.png" {
+                // create a circular (alpha-masked) variant for the "round" icon
+                let mut rgba = resized.to_rgba8();
+                let (w, h) = (rgba.width() as i32, rgba.height() as i32);
+                let cx = w / 2;
+                let cy = h / 2;
+                let r = std::cmp::min(cx, cy);
+                let rr = (r * r) as i32;
+                for y in 0..h {
+                    for x in 0..w {
+                        let dx = x - cx;
+                        let dy = y - cy;
+                        if dx * dx + dy * dy > rr {
+                            let px = rgba.get_pixel_mut(x as u32, y as u32);
+                            px[3] = 0; // fully transparent outside the circle
+                        }
+                    }
+                }
+                DynamicImage::ImageRgba8(rgba).write_to(&mut writer, ImageFormat::Png)?;
+            } else {
+                // ic_launcher and ic_launcher_foreground use the same resized image
+                resized.write_to(&mut writer, ImageFormat::Png)?;
+            }
+        }
+    }
+
+    Ok(())
+}

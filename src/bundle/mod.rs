@@ -9,11 +9,13 @@ use crate::bundle::linux::{bundle_deb, bundle_rpm, bundle_tar_zst, bundle_tar_xz
 #[cfg(target_os = "windows")]
 mod windows;
 #[cfg(target_os = "windows")]
-use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_msix, bundle_standalone};
+use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_msix};
+
+mod android;
+pub use android::handle_android;
 
 
-
-pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_method: Option<String>) {
+pub fn handle_build(bundles: Option<Vec<String>>) {
     // 1. Build the project in release mode
     let status = Command::new("cargo")
         .arg("build")
@@ -38,43 +40,6 @@ pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_metho
     // create bundles for several non-host architectures by setting the
     // SLINT_BUNDLER_FORCE_ARCH environment variable per attempt.
     // let archs_to_try = vec!["i386", "x86_64", "aarch64", "armhf", "riscv64"];
-    if cross_arch {
-        println!("TODO: Unfinished and disabled for now.");
-        /*
-        // determine host normalized arch
-        let host_arch = normalize_host_arch();
-        for arch in archs_to_try.into_iter().filter(|a| *a != host_arch) {
-            println!("Attempting bundles for target architecture: {}", arch);
-            std::env::set_var("SLINT_BUNDLER_FORCE_ARCH", arch);
-            // perform a build inside a VM/container for this arch (docker/qemu)
-            if let Some(method) = _cross_method.as_ref() {
-                if let Err(e) = run_build_in_vm(arch, method) {
-                    eprintln!("Warning: VM build for arch {} failed: {}\nFalling back to attempting packaging without fresh build.", arch, e);
-                }
-            } else {
-                // default to docker-based emulation if available
-                if let Err(e) = run_build_in_vm(arch, "docker") {
-                    eprintln!("Warning: VM build (docker) for arch {} failed: {}\nFalling back to attempting packaging without fresh build.", arch, e);
-                }
-            }
-            for bundle in &bundles {
-                match bundle.as_str() {
-                    "msi" => bundle_msi(),
-                    "nsis" => bundle_nsis(),
-                    "deb" => bundle_deb(),
-                    "rpm" => bundle_rpm(),
-                    "tar.zst" => bundle_tar_zst(),
-                    "tar.xz" => bundle_tar_xz(),
-                    "standalone" => bundle_standalone(),
-                    _ => eprintln!("Unknown bundle type: {}", bundle),
-                }
-            }
-            std::env::remove_var("SLINT_BUNDLER_FORCE_ARCH");
-        }
-        // Also produce host bundles as a final step
-        println!("Creating bundles for host architecture");
-        */
-    }
     
 
     // produce host bundles (or only bundles if cross_arch was false)
@@ -96,7 +61,6 @@ pub fn handle_build(bundles: Option<Vec<String>>, cross_arch: bool, _cross_metho
         match bundle.as_str() {
             "msi" => bundle_msi(),
             "nsis" => bundle_nsis(),
-            "standalone" => bundle_standalone(),
             "msix" => bundle_msix(),
             _ => eprintln!("Unknown bundle type: {}", bundle),
         }

@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.13.0'
+        //classpath 'com.android.application:8.13.0'
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.13.0'
+}
+apply plugin: 'com.android.application'
+android {
+    namespace "io.github.native_lib"
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "io.github.native_lib"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+    }
+
+    sourceSets.main {
+        // Gradle will package whatever is in src/main/jniLibs
+        jniLibs.srcDirs = ['src/main/jniLibs']
+    }
+
+    // No Kotlin/Java sources are required for this NativeActivity example.
+}
