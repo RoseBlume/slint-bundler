@@ -1,4 +1,3 @@
-// Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 
 use std::env;
 

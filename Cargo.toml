@@ -26,6 +26,9 @@ whoami = { version = "1.6.1", default-features = false }
 sha256 = "1.6.0"
 reqwest = "0.12.24" # Default features: __tls charset default-tls h2 http2 system-proxy
 toml = "0.9.8"
+serde_json = "1.0.145"
+serde = "1.0.228"
+regex = "1.12.2"
 
 
 

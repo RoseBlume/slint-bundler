@@ -1,7 +1,13 @@
+mod adb;
+
 use notify::{RecommendedWatcher, RecursiveMode, Watcher, EventKind};
 use std::process::{Command, Child};
 use std::sync::mpsc::channel;
 use std::time::Duration;
+use crate::android::build::begin_build;
+use adb::perform_streamed_install;
+use crate::utils::{read_package_metadata};
+
 
 pub fn handle_dev() {
     let (tx, rx) = channel();
@@ -21,16 +27,9 @@ pub fn handle_dev() {
     // Compile and run at the start
     println!("Initial build (dev profile)...");
     let mut child: Option<Child> = None;
-    let status = Command::new("cargo").arg("run").arg("--bin").spawn();
-    match status {
-        Ok(c) => {
-            println!("Running app...");
-            child = Some(c);
-        }
-        Err(e) => {
-            eprintln!("Failed to run cargo: {}", e);
-        }
-    }
+    println!("Building Application Initially");
+    begin_build("--dev");
+    perform_streamed_install();
 
     loop {
         // println!("Waiting for file changes...");
@@ -43,16 +42,8 @@ pub fn handle_dev() {
                             let _ = c.wait();
                         }
                         println!("Rebuilding (dev profile)...");
-                        let status = Command::new("cargo").arg("run").spawn();
-                        match status {
-                            Ok(c) => {
-                                println!("Running app...");
-                                child = Some(c);
-                            }
-                            Err(e) => {
-                                eprintln!("Failed to run cargo: {}", e);
-                            }
-                        }
+                        begin_build("");
+                        perform_streamed_install();
                     }
                 }
             }

@@ -2,6 +2,9 @@ mod bundle;
 mod dev;
 mod icon;
 mod doctor;
+mod android;
+mod new;
+pub mod utils;
 
 use std::env;
 use std::process;
@@ -26,13 +29,9 @@ Examples:
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
-    if args.len() < 2 {
-        println!("{}", USAGE);
-        process::exit(1);
-    }
 
     match args[1].as_str() {
+        "new" => new::handle_new(),
         "build" => {
             let bundles = parse_bundles(&args);
             bundle::handle_build(bundles);
@@ -43,7 +42,7 @@ fn main() {
             let fix = args.contains(&"--fix".to_string());
             doctor::doctor(fix);
         },
-        "android" => bundle::handle_android(&args[2]),
+        "android" => android::handle_android(&args),
         "help" => {
             if args.len() > 2 {
                 print_command_help(&args[2]);
@@ -70,16 +69,7 @@ fn parse_bundles(args: &[String]) -> Option<Vec<String>> {
         .collect())
 }
 
-fn parse_input(args: &[String]) -> String {
-    args.iter()
-        .position(|arg| arg == "--input")
-        .and_then(|i| args.get(i + 1))
-        .map(String::from)
-        .unwrap_or_else(|| {
-            eprintln!("Error: --input <png-file> is required for icon command");
-            process::exit(1);
-        })
-}
+
 
 fn print_command_help(command: &str) {
     match command {

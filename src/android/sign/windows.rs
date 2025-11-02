@@ -1,0 +1,1 @@
+pub const KEYTOOL: &str = "C:\\Program Files\\Android\\Android Studio\\jbr\\bin\\keytool.exe";

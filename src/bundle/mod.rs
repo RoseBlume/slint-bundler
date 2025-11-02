@@ -11,8 +11,7 @@ mod windows;
 #[cfg(target_os = "windows")]
 use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_msix};
 
-mod android;
-pub use android::handle_android;
+
 
 
 pub fn handle_build(bundles: Option<Vec<String>>) {
@@ -20,6 +19,7 @@ pub fn handle_build(bundles: Option<Vec<String>>) {
     let status = Command::new("cargo")
         .arg("build")
         .arg("--release")
+        .arg("--bin")
         .status()
         .expect("Failed to run cargo build");
     if !status.success() {
