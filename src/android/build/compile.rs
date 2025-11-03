@@ -19,14 +19,14 @@ pub fn build_android_targets(mode: &str) -> Result<(), std::io::Error> {
         if mode == "--release" {
             println!("Building for target: {}", target);
             let build_args = ["build", "--lib", mode, "--target", target];
-            let output = Command::new("cargo")
+            let _ = Command::new("cargo")
                 .args(build_args)
                 .status();
         }
         else {
             println!("Building for target: {}", target);
             let build_args = ["build", "--lib", "--target", target, "--crate-type", "cdylib"];
-            let output = Command::new("cargo")
+            let _ = Command::new("cargo")
                 .args(build_args)
                 .status();
         }

@@ -1,9 +1,7 @@
-use std::fs::{File, self};
+use std::fs::{self};
 use std::path::{Path, PathBuf};
-use regex::Regex;
-use std::env;
 use std::io::{self, Write};
-use crate::icon::generate_pngs;
+//use crate::icon::generate_pngs;
 
 const ICON: &[u8; 145951] = include_bytes!("./icon.png");
 fn unpack_icon(package_name: &str) {
@@ -12,22 +10,11 @@ fn unpack_icon(package_name: &str) {
     std::fs::write(output_path, ICON).expect("Failed to write icon.png");
 }
 
-// {
-//     "app_id": "io.github.RoseBlume.native_lib",
-//     "project_name": "Native Lib",
-//     "version": "1.0.0",
-//     "package_name": "native_lib" 
-// }
-
-// let (app_id, project_name, version, package_name) = read_package_metadata();
 struct TemplateFile {
     path: PathBuf,
     content: String,
 }
-fn is_snake_case(s: &str) -> bool {
-    let re = Regex::new(r"^[a-z0-9]+(?:_[a-z0-9]+)*$").unwrap();
-    re.is_match(s)
-}
+
 
 fn get_package_name() -> String {
     let mut package_name: String = "slint_lib".to_string();

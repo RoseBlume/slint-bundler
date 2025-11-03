@@ -1,12 +1,11 @@
 mod adb;
 
 use notify::{RecommendedWatcher, RecursiveMode, Watcher, EventKind};
-use std::process::{Command, Child};
+use std::process::{Child};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 use crate::android::build::begin_build;
 use adb::perform_streamed_install;
-use crate::utils::{read_package_metadata};
 
 
 pub fn handle_dev() {

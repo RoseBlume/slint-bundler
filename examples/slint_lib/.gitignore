@@ -6,3 +6,4 @@ gradle
 *.keystore
 *.apk
 *.idsig
+android/app/src/main/jniLibs/*

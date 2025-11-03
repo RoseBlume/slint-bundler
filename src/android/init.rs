@@ -37,7 +37,7 @@ pub fn create_jni_dirs() {
     }
 }
 
-fn generate_template_files(package_name: &str, version: &str, app_id: &str, project_name: &str) -> Vec<AndroidTemplateFile> {
+fn generate_template_files(package_name: &str, _version: &str, app_id: &str, project_name: &str) -> Vec<AndroidTemplateFile> {
     let mut files = Vec::new();
     files.push(AndroidTemplateFile {
         path: PathBuf::from("gradlew"),

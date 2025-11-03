@@ -7,8 +7,8 @@ use std::process::Command;
 use std::io::{self, Write};
 use crate::utils::{read_package_metadata};
 use key::get_distinguished_names;
-#[cfg(target_os="windows")]
-use windows::KEYTOOL;
+// #[cfg(target_os="windows")]
+// use windows::KEYTOOL;
 use crate::utils::find_build_tools;
 pub fn handle_sign(args: &[String]) {
     match args[3].as_str() {
@@ -25,15 +25,9 @@ fn generate_key(keyfile: &str) {
     io::stdin().read_line(&mut alias).expect("Failed to read line");
     alias = alias.trim().to_string();
 
-    // let mut keystore = String::new();
-    // print!("Please enter your keystore file location(relative to current directory): ");
-    // io::stdout().flush().unwrap();
-    // io::stdin().read_line(&mut keystore).expect("Failed to read line");
-    // keystore = keystore.trim().to_string();
     let dname = &get_distinguished_names();
 
-    // keytool -genkey -alias dbcredentials -keyalg RSA -keystore database_keystore.jks -keysize 2048
-    let output = Command::new("keytool")
+    let _ = Command::new("keytool")
                 .args(
                     [
                         "-genkey", 
@@ -57,12 +51,11 @@ fn sign_bundle(keystore: String) {
     let (_app_id, _project_name, _version, package_name) = read_package_metadata();
     let apk_signer = format!("{}\\apksigner.bat", find_build_tools());
     println!("{}", apk_signer);
-    //apksigner sign --ks release.jks app.apk
     let current_path: String = env::var("PATH").unwrap_or_default();
     env::set_var("PATH", format!("{};{}", current_path, apk_signer));
     let apk_path = "android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk";
     let output_path = format!("{}-signed.apk", package_name);
-    let output = Command::new(apk_signer)
+    let _ = Command::new(apk_signer)
                 .args(["sign", "--ks", keystore.as_str(), "--in", apk_path, "--out", &output_path])
                 .status();
 }

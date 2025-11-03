@@ -1,7 +1,6 @@
 mod buildtools;
 
 use std::fs::File;
-use std::io::BufReader;
 use serde_json;
 use serde::{Deserialize, Serialize};
 use std::io::Read;
