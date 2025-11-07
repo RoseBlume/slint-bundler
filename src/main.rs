@@ -4,10 +4,11 @@ mod icon;
 mod doctor;
 mod android;
 mod new;
+mod help;
 pub mod utils;
+use crate::help::generate_help_message;
 
 use std::env;
-use std::process;
 
 const USAGE: &str = "Usage: slint-bundler <command> [options]
 
@@ -50,11 +51,7 @@ fn main() {
                 println!("{}", USAGE);
             }
         },
-        _ => {
-            eprintln!("Unknown command: {}", args[1]);
-            println!("\n{}", USAGE);
-            process::exit(1);
-        }
+        _ => println!("{}", generate_help_message(&args))
     }
 }
 

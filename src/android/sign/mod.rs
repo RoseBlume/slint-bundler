@@ -5,16 +5,18 @@ use std::env;
 use std::process::Command;
 
 use std::io::{self, Write};
-use crate::utils::{read_package_metadata};
 use key::get_distinguished_names;
+use crate::utils::{read_package_metadata};
+use crate::utils::find_build_tools;
+use crate::help::generate_help_message;
 // #[cfg(target_os="windows")]
 // use windows::KEYTOOL;
-use crate::utils::find_build_tools;
+
 pub fn handle_sign(args: &[String]) {
     match args[3].as_str() {
         "generate" => generate_key(&args[4]),
         "sign" => sign_bundle(args[4].clone()),
-        _ => println!("Failed")
+        _ => println!("{}", generate_help_message(&args))
     }
 }
 fn generate_key(keyfile: &str) {

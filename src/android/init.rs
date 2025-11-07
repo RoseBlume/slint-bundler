@@ -3,6 +3,27 @@ use std::path::{Path, PathBuf};
 use crate::icon::generate_android_icons;
 use crate::utils::{read_package_metadata};
 
+
+
+fn find_path() -> String {
+    let username = whoami::username();
+    #[cfg(target_os = "windows")]
+    let paths = [
+        format!("C:/Users/{}/.cargo/bin", username),
+        "$ANDROID_NDK/toolchains/llvm/prebuilt/windows-x86_64/bin;".to_string(),
+        format!("C:/Users/{}/AppData/Local/Android/Sdk/platform-tools;", username),
+        "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja;".to_string(),
+        "C:/Program Files/Android/Android Studio/jbr/bin".to_string()
+    ];
+
+    let mut path_var = String::new();
+    for path in paths {
+        path_var.push_str(&path);
+    }
+    path_var.to_string()
+}
+
+
 const ANDROID_ABIS: [&str; 4] = ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"];
 struct AndroidTemplateFile {
     path: PathBuf,
@@ -393,9 +414,9 @@ if "%OS%"=="Windows_NT" endlocal
 ANDROID_HOME = "C:/Users/{username}/AppData/Local/Android/Sdk"
 ANDROID_NDK = "C:/Users/{username}/AppData/Local/Android/Sdk/ndk/27.0.12077973"
 JAVA_HOME = "C:/Program Files/Android/Android Studio/jbr"
-PATH="$PATH:$ANDROID_NDK/toolchains/llvm/prebuilt/windows-x86_64/bin"
+PATH= "{path}"
 ANDROID_PLATFORM = "android-33"
-ninja = "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe"
+SKIA_NINJA_COMMAND = "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe"
 
 CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="aarch64-linux-android33-clang.cmd"
 CC_aarch64_linux_android="aarch64-linux-android33-clang.cmd"
@@ -435,10 +456,10 @@ CC = "C:/Users/{username}/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains
 CXX="armv7a-linux-androideabi33-clang++.cmd"
 ANDROID_HOME = "C:/Users/{username}/AppData/Local/Android/Sdk"
 ANDROID_NDK = "C:/Users/{username}/AppData/Local/Android/Sdk/ndk/27.0.12077973"
-JAVA_HOME = "C:/Program Files/Android/Android Studio1/jbr"
-PATH="$PATH:$ANDROID_NDK/toolchains/llvm/prebuilt/windows-x86_64/bin"
+JAVA_HOME = "C:/Program Files/Android/Android Studio/jbr"
+PATH="{path}"
 ANDROID_PLATFORM = "android-33"
-        "#, username = whoami::username())
+        "#, username = whoami::username(), path = find_path())
     });
     // Root build.gradle.kts
     files.push(AndroidTemplateFile {

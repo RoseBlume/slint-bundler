@@ -1,0 +1,10 @@
+.cargo
+target
+build
+gradle
+*.jks
+*.keystore
+*.apk
+*.idsig
+android/app/src/main/jniLibs/*
+vendor

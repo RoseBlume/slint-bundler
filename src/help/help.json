@@ -1,0 +1,57 @@
+
+// Commands:
+//   build     Build and bundle the project
+//             Options: --bundles <bundle-types>
+//   dev       Run the project in dev mode (auto-recompile on change)
+//   icon      Generate icons from PNG input
+//             Options: --input <png-file>
+//   doctor    Check environment setup
+//             Options: --fix
+//   android   Build Android package
+//   help      Print this message or help for specific command
+
+// Examples:
+//   slint-bundler build --bundles deb,msi
+//   slint-bundler icon --input icon.png
+//   slint-bundler help build";
+
+
+        // "init" => {
+        //     initialize_android_project().expect("Failed to initialize android project");
+        //     create_jni_dirs();
+        //     unpack_gradle_jar();
+
+        // },
+        // "build" => begin_build("--release"),
+        // "dev" => handle_dev(),
+        // "key" => handle_sign(args),
+
+{
+    "build": "build: Build and bundle the project",
+    "dev": "dev: Run the project in dev mode (auto-recompile on change)",
+    "icon": "icon: Generate icons from PNG input\nUsage: slint-bundler icon /path/to/image.png (Must be 1024x1024px)",
+    "doctor": "doctor: Check environment setup",
+    "android": [
+        
+        "android: Run an android subcommand", 
+        "\nUsage: slint-bundler android <subcommand>",
+        "\n\nSubcommands:",
+        {
+            "init": "\n\tinit: Initialize an android project",
+            "build": "\n\t:build: Build an android apk",
+            "dev": "\n\tdev: Run the project in dev mode on an android device or emulator (auto-recompile on change)",
+            "key": [
+                "key: Run an android key subcommand", 
+                "\nUsage: slint-bundler android key <subcommand>",
+                "\n\nSubcommands:",
+                {
+                    "generate": "generate: Generate a keystore to sign",
+                    "sign": "sign: Sign an apk bundle"
+                }
+            ]
+        }
+    ]
+}
+10.10.6 /23
+
+255.255.254.0

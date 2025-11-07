@@ -1,0 +1,46 @@
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    in-out property <int> counter: 1;
+    in-out property <[string]> info: ["Info: "];
+    out property <string> filepath;
+    callback request-increase-value();
+    callback request-decrease-value();
+    callback request-play();
+    VerticalBox {
+        Button {
+            text: "Increase value";
+            clicked => {
+                 
+                root.request-increase-value();
+                root.filepath = root.info[counter];
+            }
+        }
+        Text {
+            text: "Counter: \{root.counter}";
+        }
+        Button {
+            text: "Decrease value";
+            clicked => { 
+                root.request-decrease-value();
+                root.filepath = root.info[counter];
+            }
+        }
+        Text {
+            text: "Debug Info: \{root.info[counter]}";
+        }
+
+        HorizontalBox {
+            Button {
+                text: "Play";
+                clicked => {
+                    root.request-play();
+                }
+            }
+        }
+        width: parent.width;
+        height: parent.height;
+
+
+    }
+}

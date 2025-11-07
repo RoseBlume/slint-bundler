@@ -1,0 +1,14 @@
+import {VerticalBox} from "std-widgets.slint";
+
+export component ListItem {
+    callback request-file-name();
+    in-out property <string> file;
+    init => {
+        root.request-file-name()
+    }
+    VerticalBox {
+        Text {
+            text: "\{root.file}";
+        }
+    }
+}

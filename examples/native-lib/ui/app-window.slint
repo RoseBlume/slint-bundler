@@ -4,6 +4,7 @@ export component AppWindow inherits Window {
     in-out property <int> counter: 42;
     callback request-increase-value();
     callback request-decrease-value();
+    callback request-write-files();
     VerticalBox {
         Button {
             text: "Increase value";
@@ -18,6 +19,12 @@ export component AppWindow inherits Window {
             text: "Decrease value";
             clicked => {
                 root.request-decrease-value();
+            }
+        }
+        Button {
+            text: "Test Files";
+            clicked => {
+                root.request-write-files();
             }
         }
         Text {

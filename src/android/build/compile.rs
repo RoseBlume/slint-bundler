@@ -25,7 +25,7 @@ pub fn build_android_targets(mode: &str) -> Result<(), std::io::Error> {
         }
         else {
             println!("Building for target: {}", target);
-            let build_args = ["build", "--lib", "--target", target, "--crate-type", "cdylib"];
+            let build_args = ["build", "--lib", "--target", target];
             let _ = Command::new("cargo")
                 .args(build_args)
                 .status();

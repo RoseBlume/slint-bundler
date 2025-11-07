@@ -6,6 +6,7 @@ mod sign;
 use init::{initialize_android_project, create_jni_dirs};
 use tools::unpack_gradle_jar;
 use sign::handle_sign;
+use crate::help::generate_help_message;
 
 pub use build::begin_build;
 use dev::handle_dev;
@@ -22,7 +23,7 @@ pub fn handle_android(args: &[String]) {
         "build" => begin_build("--release"),
         "dev" => handle_dev(),
         "key" => handle_sign(args),
-        _ => println!("Invalid option")
+        _ => println!("{}", generate_help_message(&args))
     }
     //unpack_gradle_jar(GRADLE_WRAPPER_PATH);
     //begin_build();

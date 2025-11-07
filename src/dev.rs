@@ -21,7 +21,7 @@ pub fn handle_dev() {
     // Compile and run at the start
     println!("Initial build (dev profile)...");
     let mut child: Option<Child> = None;
-    let status = Command::new("cargo").arg("run").arg("--bin").spawn();
+    let status = Command::new("cargo").arg("run").spawn();
     match status {
         Ok(c) => {
             println!("Running app...");

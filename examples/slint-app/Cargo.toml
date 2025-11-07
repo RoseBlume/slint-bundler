@@ -1,0 +1,40 @@
+[package]
+name = "slint"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+name = "slinterlib"
+path = "src/lib.rs"
+crate-type = ["staticlib", "cdylib", "rlib"]
+# crate-type = ["cdylib"]
+
+[target."cfg(target_os = \"android\")".dependencies]
+slint = {version = "1.14.1", features = ["std", "backend-android-activity-06"]}
+log = "0.4"
+# i-slint-backend-android-activity = "1.14.1"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".build-dependencies]
+slint-build = {version = "1.14.1"}
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+slint = "1.14.1"
+
+[target."cfg(target_os = \"windows\")".dependencies]
+i-slint-backend-winit = "1.14.1"
+[profile.release]
+opt-level = 3
+strip = "debuginfo"
+
+[dependencies]
+lofty = "0.22.4"
+once_cell = "1.21.3"
+rand = "0.9.2"
+rodio = {version = "0.20.1", default-features = false, features = ["symphonia-all"] }
+serde = "1.0.228"
+serde_json = "1.0.145"
+tokio = {version = "1.43.0", features = ["rt"]}
+walkdir = "2.5.0"
+whoami = "1.6.1"
+
