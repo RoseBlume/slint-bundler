@@ -8,18 +8,18 @@ use std::io::{self, Write};
 use key::get_distinguished_names;
 use crate::utils::{read_package_metadata};
 use crate::utils::find_build_tools;
-use crate::help::generate_help_message;
+// use crate::help::generate_help_message;
 // #[cfg(target_os="windows")]
 // use windows::KEYTOOL;
 
-pub fn handle_sign(args: &[String]) {
-    match args[3].as_str() {
-        "generate" => generate_key(&args[4]),
-        "sign" => sign_bundle(args[4].clone()),
-        _ => println!("{}", generate_help_message(&args))
-    }
-}
-fn generate_key(keyfile: &str) {
+// pub fn handle_sign(args: &[String]) {
+//     match args[3].as_str() {
+//         "generate" => generate_key(&args[4]),
+//         "sign" => sign_bundle(args[4].clone()),
+//         _ => println!("{}", generate_help_message(&args))
+//     }
+// }
+pub fn generate_key(keyfile: &str) {
 
     let mut alias = String::new();
     print!("Please enter your keystore Alias: ");
@@ -49,7 +49,7 @@ fn generate_key(keyfile: &str) {
 }
 
 
-fn sign_bundle(keystore: String) {
+pub fn sign_bundle(keystore: String) {
     let (_app_id, _project_name, _version, package_name) = read_package_metadata();
     let apk_signer = format!("{}\\apksigner.bat", find_build_tools());
     println!("{}", apk_signer);

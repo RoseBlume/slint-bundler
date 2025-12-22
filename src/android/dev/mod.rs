@@ -8,7 +8,7 @@ use crate::android::build::begin_build;
 use adb::perform_streamed_install;
 
 
-pub fn handle_dev() {
+pub fn handle_android_dev() {
     let (tx, rx) = channel();
     let mut watcher = RecommendedWatcher::new(tx, notify::Config::default()).expect("Failed to create watcher");
     let src_path = std::path::Path::new("src").canonicalize().expect("Failed to canonicalize src path");

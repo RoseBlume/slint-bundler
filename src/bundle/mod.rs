@@ -1,4 +1,3 @@
-use std::process::Command;
 #[cfg(target_os = "linux")]
 mod linux;
 #[cfg(target_os = "linux")]
@@ -14,9 +13,9 @@ use crate::bundle::windows::{bundle_msi, bundle_nsis, bundle_msix};
 
 
 
-pub fn handle_build(bundles: Option<Vec<String>>) {
+pub fn handle_build(bundles: Vec<String>) {
     // 1. Build the project in release mode
-    let status = Command::new("cargo")
+    let status = std::process::Command::new("cargo")
         .arg("build")
         .arg("--release")
         .arg("--bin")
@@ -34,18 +33,17 @@ pub fn handle_build(bundles: Option<Vec<String>>) {
         "linux" => vec!["deb", "rpm", "tar.zst", "tar.xz", "standalone"],
         _ => vec!["standalone"],
     };
-    let bundles = bundles.unwrap_or_else(|| all_bundles.iter().map(|s| s.to_string()).collect());
 
-    // 3. Bundle for each requested type. If cross_arch flag is set, attempt to
-    // create bundles for several non-host architectures by setting the
-    // SLINT_BUNDLER_FORCE_ARCH environment variable per attempt.
-    // let archs_to_try = vec!["i386", "x86_64", "aarch64", "armhf", "riscv64"];
-    
+    // Use passed bundles, or default to host OS bundles if empty
+    let bundles = if bundles.is_empty() {
+        all_bundles.iter().map(|s| s.to_string()).collect::<Vec<_>>()
+    } else {
+        bundles
+    };
 
-    // produce host bundles (or only bundles if cross_arch was false)
-    
+    // 3. Produce host bundles
     #[cfg(target_os = "linux")]
-    for bundle in bundles {
+    for bundle in &bundles {
         match bundle.as_str() {
             "deb" => bundle_deb(),
             "rpm" => bundle_rpm(),
@@ -57,7 +55,7 @@ pub fn handle_build(bundles: Option<Vec<String>>) {
     }
 
     #[cfg(target_os = "windows")]
-    for bundle in bundles {
+    for bundle in &bundles {
         match bundle.as_str() {
             "msi" => bundle_msi(),
             "nsis" => bundle_nsis(),
@@ -66,4 +64,5 @@ pub fn handle_build(bundles: Option<Vec<String>>) {
         }
     }
 }
+
 

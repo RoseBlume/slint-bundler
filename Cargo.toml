@@ -16,7 +16,8 @@ tempfile = {version = "3.23.0", default-features = false }
 msix = "0.4.0"
 
 [dependencies]
-clap = { version = "4.0", default-features = false, features = ["derive", "std", "help"] }
+clap-lite = { path = "../../." }
+# clap = { version = "4.0", default-features = false, features = ["derive", "std", "help"] }
 notify = { version = "6.1", default-features = false}
 which = { version = "5.0", default-features = false}
 image = { version = "0.25.8", default-features = false, features = ["ico", "png"] }
